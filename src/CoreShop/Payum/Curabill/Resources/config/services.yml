@@ -1,0 +1,17 @@
+services:
+
+    CoreShop\Payum\CurabillBundle\Extension\ConvertPaymentExtension:
+        autowire: true
+        tags:
+            - { name: payum.extension, alias: curabill_language_extension, factory: curabill, gateway: curabill, prepend: false }
+
+    CoreShop\Payum\CurabillBundle\Form\Payment\CurabillType:
+        tags:
+            - { name: coreshop.gateway_configuration_type, type: curabill }
+            - { name: form.type }
+
+    payum.curabill_gateway_factory:
+        class: Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder
+        arguments: [DachcomDigital\Payum\Curabill\CurabillGatewayFactory]
+        tags:
+            - {name: payum.gateway_factory_builder, factory: curabill }

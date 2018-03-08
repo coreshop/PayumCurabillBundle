@@ -1,0 +1,4 @@
+curabill.config.environment: 'Umgebung'
+curabill.config.username: 'Benutzername'
+curabill.config.transaction_token: 'Transaktion Token'
+curabill.config.optional_parameter: 'Optionale Parameter'

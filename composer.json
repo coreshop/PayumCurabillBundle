@@ -1,0 +1,49 @@
+{
+    "name": "coreshop/payum-curabill-bundle",
+    "type": "pimcore-bundle",
+    "description": "CoreShop - Curabill Bundle",
+    "keywords": [
+        "coreshop",
+        "pimcore",
+        "ecommerce",
+        "curabill"
+    ],
+    "homepage": "http://www.coreshop.org",
+    "license": "GPLv3",
+    "authors": [
+        {
+            "name": "DACHCOM.DIGITAL Stefan Hagspiel",
+            "email": "shagspiel@dachcom.ch",
+            "homepage": "http://www.dachcom.com/",
+            "role": "Developer"
+        },
+        {
+            "name": "Dominik Pfaffenbauer",
+            "email": "dominik@pfaffenbauer.at",
+            "homepage": "https://www.pfaffenbauer.at/",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.0",
+        "dachcom-digital/payum-curabill": "dev-master"
+    },
+    "config": {
+        "bin-dir": "bin"
+    },
+    "autoload": {
+        "psr-4": {
+            "CoreShop\\Payum\\CurabillBundle\\": "src/CoreShop/Payum/Curabill"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0-dev"
+        },
+        "pimcore": {
+            "bundles": [
+                "CoreShop\\Payum\\CurabillBundle\\CurabillBundle"
+            ]
+        }
+    }
+}
