@@ -1,5 +1,11 @@
 services:
 
+    CoreShop\Payum\CurabillBundle\Extension\InvoiceTransformerExtension:
+        arguments:
+            - '@coreshop.repository.order'
+        tags:
+            - { name: payum.extension, alias: curabill_customer_transformer_extension, factory: curabill, gateway: curabill, prepend: false }
+
     CoreShop\Payum\CurabillBundle\Extension\ConvertPaymentExtension:
         autowire: true
         tags:

@@ -1,4 +1,6 @@
 curabill.config.environment: 'Umgebung'
 curabill.config.username: 'Benutzername'
 curabill.config.transaction_token: 'Transaktion Token'
+curabill.config.payment_method: 'Zahlungsmethode'
+curabill.config.shop_code: 'Shop Code'
 curabill.config.optional_parameter: 'Optionale Parameter'

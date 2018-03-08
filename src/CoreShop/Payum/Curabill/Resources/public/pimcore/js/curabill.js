@@ -14,8 +14,7 @@ pimcore.registerNS('coreshop.provider.gateways.curabill');
 coreshop.provider.gateways.curabill = Class.create(coreshop.provider.gateways.abstract, {
 
     optionalFields: [
-        'processing',
-        'shop_code'
+
     ],
 
     getLayout: function (config) {
@@ -25,6 +24,14 @@ coreshop.provider.gateways.curabill = Class.create(coreshop.provider.gateways.ab
             data: [
                 ['test', 'Test'],
                 ['production', 'Production']
+            ]
+        }),
+            paymentMethodsStore = new Ext.data.ArrayStore({
+            fields: ['paymentMethod', 'paymentMethodName'],
+            data: [
+                ['invoice', 'Invoice'],
+                ['curapay', 'Curapay'],
+                ['instalment_payment', 'Instalment Payment']
             ]
         });
 
@@ -63,6 +70,19 @@ coreshop.provider.gateways.curabill = Class.create(coreshop.provider.gateways.ab
                 forceSelection: true,
                 selectOnFocus: true
             },
+             {
+                xtype: 'combobox',
+                fieldLabel: t('curabill.config.payment_method'),
+                name: 'gatewayConfig.config.paymentMethod',
+                value: config.paymentMethods ? config.paymentMethods : '',
+                store: paymentMethodsStore,
+                triggerAction: 'all',
+                valueField: 'paymentMethod',
+                displayField: 'paymentMethodName',
+                mode: 'local',
+                forceSelection: true,
+                selectOnFocus: true
+            },
             {
                 xtype: 'textfield',
                 fieldLabel: t('curabill.config.username'),
@@ -76,6 +96,13 @@ coreshop.provider.gateways.curabill = Class.create(coreshop.provider.gateways.ab
                 name: 'gatewayConfig.config.transactionToken',
                 length: 255,
                 value: config.transactionToken ? config.transactionToken : ''
+            },
+            {
+                xtype: 'textfield',
+                fieldLabel: t('curabill.config.shop_code'),
+                name: 'gatewayConfig.config.shopCode',
+                length: 255,
+                value: config.shopCode ? config.shopCode : ''
             },
             {
                 xtype: 'fieldset',
