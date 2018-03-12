@@ -16,6 +16,11 @@ services:
             - { name: coreshop.gateway_configuration_type, type: curabill }
             - { name: form.type }
 
+    CoreShop\Payum\CurabillBundle\Form\Payment\CurabillSettingsType:
+        tags:
+            - { name: coreshop.payment.form.settings, payum-factory: curabill }
+            - { name: form.type }
+
     payum.curabill_gateway_factory:
         class: Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder
         arguments: [DachcomDigital\Payum\Curabill\CurabillGatewayFactory]

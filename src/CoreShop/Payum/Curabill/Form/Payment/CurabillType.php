@@ -50,6 +50,13 @@ final class CurabillType extends AbstractType
                     ]),
                 ],
             ])
+             ->add('responseToken', TextType::class, [
+                'constraints' => [
+                    new NotBlank([
+                        'groups' => 'coreshop',
+                    ]),
+                ],
+            ])
             ->add('paymentMethod', TextType::class, [
                 'constraints' => [
                     new NotBlank([
@@ -64,7 +71,20 @@ final class CurabillType extends AbstractType
                     ]),
                 ],
             ])
+            ->add('uncertainProfiles', TextType::class, [
+                'constraints' => [],
+            ])
             ->add('optionalParameters', CollectionType::class, [
+                'allow_add'    => true,
+                'allow_delete' => true,
+                'required'     => false
+            ])
+            ->add('invoiceParty', CollectionType::class, [
+                'allow_add'    => true,
+                'allow_delete' => true,
+                'required'     => false
+            ])
+            ->add('paymentInformation', CollectionType::class, [
                 'allow_add'    => true,
                 'allow_delete' => true,
                 'required'     => false
