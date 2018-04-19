@@ -23,14 +23,6 @@ coreshop.provider.gateways.curabill = Class.create(coreshop.provider.gateways.ab
                     ['test', 'Test'],
                     ['production', 'Production']
                 ]
-            }),
-            paymentMethodsStore = new Ext.data.ArrayStore({
-                fields: ['paymentMethod', 'paymentMethodName'],
-                data: [
-                    ['invoice', 'Invoice'],
-                    ['curapay', 'Curapay'],
-                    ['instalment', 'Instalment Payment']
-                ]
             });
 
         var optionalFields = [{
@@ -184,127 +176,6 @@ coreshop.provider.gateways.curabill = Class.create(coreshop.provider.gateways.ab
             }
         ];
 
-        var paymentInformationFields = [
-            {
-                xtype: 'label',
-                anchor: '100%',
-                style: 'display:block; padding:5px; background:#f5f5f5; border:1px solid #eee; font-weight: 300;',
-                html: 'Optional. If you pass any payment information here you need to fill out all the field.'
-            },
-            {
-                xtype: 'textarea',
-                anchor: '100%',
-                fieldLabel: t('curabill.config.payment_information.payment_conditions'),
-                name: 'gatewayConfig.config.paymentInformation.paymentConditions',
-                value: config.paymentInformation && config.paymentInformation.paymentConditions ? config.paymentInformation.paymentConditions : ''
-            },
-            {
-                xtype: 'numberfield',
-                anchor: '100%',
-                fieldLabel: t('curabill.config.payment_information.term_of_payment'),
-                name: 'gatewayConfig.config.paymentInformation.termOfPayment',
-                minValue: 0,
-                value: config.paymentInformation && config.paymentInformation.termOfPayment ? config.paymentInformation.termOfPayment : ''
-            },
-            {
-                xtype: 'textfield',
-                anchor: '100%',
-                fieldLabel: t('curabill.config.payment_information.due_date'),
-                name: 'gatewayConfig.config.paymentInformation.dueDate',
-                length: 255,
-                value: config.paymentInformation && config.paymentInformation.dueDate ? config.paymentInformation.dueDate : ''
-            },
-            {
-                xtype: 'numberfield',
-                anchor: '100%',
-                fieldLabel: t('curabill.config.payment_information.discount_for_prompt_payment_rate'),
-                name: 'gatewayConfig.config.paymentInformation.discountForPromptPaymentRate',
-                length: 255,
-                value: config.paymentInformation && config.paymentInformation.discountForPromptPaymentRate ? config.paymentInformation.discountForPromptPaymentRate : ''
-            },
-            {
-                xtype: 'textfield',
-                anchor: '100%',
-                fieldLabel: t('curabill.config.payment_information.discount_for_prompt_payment_expire_date'),
-                name: 'gatewayConfig.config.paymentInformation.discountForPromptPaymentExpireDate',
-                length: 255,
-                value: config.paymentInformation && config.paymentInformation.discountForPromptPaymentExpireDate ? config.paymentInformation.discountForPromptPaymentExpireDate : ''
-            },
-            {
-                xtype: 'textfield',
-                anchor: '100%',
-                fieldLabel: t('curabill.config.payment_information.esr_number'),
-                name: 'gatewayConfig.config.paymentInformation.esrNumber',
-                length: 255,
-                minLength: 27,
-                value: config.paymentInformation && config.paymentInformation.esrNumber ? config.paymentInformation.esrNumber : ''
-            },
-            {
-                xtype: 'textfield',
-                anchor: '100%',
-                fieldLabel: t('curabill.config.payment_information.esr_participation_number'),
-                name: 'gatewayConfig.config.paymentInformation.esrParticipationNumber',
-                length: 255,
-                value: config.paymentInformation && config.paymentInformation.esrParticipationNumber ? config.paymentInformation.esrParticipationNumber : ''
-            },
-            {
-                xtype: 'textfield',
-                anchor: '100%',
-                fieldLabel: t('curabill.config.payment_information.bank_clearing_number'),
-                name: 'gatewayConfig.config.paymentInformation.bankClearingNumber',
-                length: 255,
-                value: config.paymentInformation && config.paymentInformation.bankClearingNumber ? config.paymentInformation.bankClearingNumber : ''
-            },
-            {
-                xtype: 'textfield',
-                anchor: '100%',
-                fieldLabel: t('curabill.config.payment_information.bank_name'),
-                name: 'gatewayConfig.config.paymentInformation.bankName',
-                length: 255,
-                value: config.paymentInformation && config.paymentInformation.bankName ? config.paymentInformation.bankName : ''
-            },
-            {
-                xtype: 'textfield',
-                anchor: '100%',
-                fieldLabel: t('curabill.config.payment_information.branch'),
-                name: 'gatewayConfig.config.paymentInformation.branch',
-                length: 255,
-                value: config.paymentInformation && config.paymentInformation.branch ? config.paymentInformation.branch : ''
-            },
-            {
-                xtype: 'textfield',
-                anchor: '100%',
-                fieldLabel: t('curabill.config.payment_information.country'),
-                name: 'gatewayConfig.config.paymentInformation.country',
-                length: 255,
-                value: config.paymentInformation && config.paymentInformation.country ? config.paymentInformation.country : ''
-            },
-            {
-                xtype: 'textfield',
-                anchor: '100%',
-                fieldLabel: t('curabill.config.payment_information.bank_account_number'),
-                name: 'gatewayConfig.config.paymentInformation.bankAccountNumber',
-                length: 255,
-                value: config.paymentInformation && config.paymentInformation.bankAccountNumber ? config.paymentInformation.bankAccountNumber : ''
-            },
-            {
-                xtype: 'textfield',
-                anchor: '100%',
-                fieldLabel: t('curabill.config.payment_information.payee_name'),
-                name: 'gatewayConfig.config.paymentInformation.payeeName',
-                length: 255,
-                value: config.paymentInformation && config.paymentInformation.payeeName ? config.paymentInformation.payeeName : ''
-            },
-            {
-                xtype: 'textfield',
-                anchor: '100%',
-                fieldLabel: t('curabill.config.payment_information.iban_number'),
-                name: 'gatewayConfig.config.paymentInformation.ibanNumber',
-                length: 255,
-                value: config.paymentInformation && config.paymentInformation.ibanNumber ? config.paymentInformation.ibanNumber : ''
-            }
-        ];
-
         Ext.Array.each(this.optionalFields, function (field) {
             var value = config.optionalParameters && config.optionalParameters[field] ? config.optionalParameters[field] : '';
             optionalFields.push({
@@ -329,21 +200,6 @@ coreshop.provider.gateways.curabill = Class.create(coreshop.provider.gateways.ab
                 triggerAction: 'all',
                 valueField: 'environment',
                 displayField: 'environmentName',
-                mode: 'local',
-                anchor: '100%',
-                flex: 1,
-                forceSelection: true,
-                selectOnFocus: true
-            },
-            {
-                xtype: 'combobox',
-                fieldLabel: t('curabill.config.payment_method'),
-                name: 'gatewayConfig.config.paymentMethod',
-                value: config.paymentMethod ? config.paymentMethod : '',
-                store: paymentMethodsStore,
-                triggerAction: 'all',
-                valueField: 'paymentMethod',
-                displayField: 'paymentMethodName',
                 mode: 'local',
                 anchor: '100%',
                 flex: 1,
@@ -387,16 +243,6 @@ coreshop.provider.gateways.curabill = Class.create(coreshop.provider.gateways.ab
                 value: config.shopCode ? config.shopCode : ''
             },
             {
-                xtype: 'textfield',
-                fieldLabel: t('curabill.config.uncertain_profiles'),
-                name: 'gatewayConfig.config.uncertainProfiles',
-                anchor: '100%',
-                emptyText: t('curabill.config.uncertain_profiles_text'),
-                flex: 1,
-                length: 255,
-                value: config.uncertainProfiles ? config.uncertainProfiles : ''
-            },
-            {
                 xtype: 'fieldset',
                 title: t('curabill.config.invoice_party_address'),
                 collapsible: true,
@@ -407,18 +253,6 @@ coreshop.provider.gateways.curabill = Class.create(coreshop.provider.gateways.ab
                 flex: 1,
                 defaultType: 'textfield',
                 items: invoicePartyFields
-            },
-            {
-                xtype: 'fieldset',
-                title: t('curabill.config.payment_information'),
-                collapsible: true,
-                collapsed: true,
-                autoHeight: true,
-                labelWidth: 250,
-                anchor: '100%',
-                flex: 1,
-                defaultType: 'textfield',
-                items: paymentInformationFields
             },
             {
                 xtype: 'fieldset',

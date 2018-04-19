@@ -57,22 +57,12 @@ final class CurabillType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('paymentMethod', TextType::class, [
-                'constraints' => [
-                    new NotBlank([
-                        'groups' => 'coreshop',
-                    ]),
-                ],
-            ])
             ->add('shopCode', TextType::class, [
                 'constraints' => [
                     new NotBlank([
                         'groups' => 'coreshop',
                     ]),
                 ],
-            ])
-            ->add('uncertainProfiles', TextType::class, [
-                'constraints' => [],
             ])
             ->add('optionalParameters', CollectionType::class, [
                 'allow_add'    => true,

@@ -82,10 +82,9 @@ final class InvoiceTransformerExtension implements ExtensionInterface
         $details = ArrayObject::ensureArrayObject($request->getModel());
 
         $additionalData = [
-            'birtdate'           => $details['birthdate'],
-            'deliveryMethod'     => $details['deliveryMethod'],
-            'invoiceParty'       => $gatewayData['invoiceParty'],
-            'paymentInformation' => $gatewayData['paymentInformation'],
+            'birtdate'       => $details['birthdate'],
+            'deliveryMethod' => $details['deliveryMethod'],
+            'invoiceParty'   => $gatewayData['invoiceParty']
         ];
 
         $this->setInvoiceHeader($order, $request, $additionalData);
@@ -105,15 +104,13 @@ final class InvoiceTransformerExtension implements ExtensionInterface
 
         $invoiceHeaderData = [
             'basicInformation' => [
-                'documentType'          => $request->getDocumentType(),
-                'documentNumber'        => $order->getId(),
-                'documentDate'          => $orderDate->format('Y-m-d'),
-                'documentCurrency'      => $order->getCurrency()->getIsoCode(),
-                'orderNumberCustomer'   => $order->getOrderNumber(),
-                'contractIdentification' => '', //?
-                //'invoiceReference' => '', //?
-                //'invoiceDate'           => //?
-                'invoiceDeliveryMethod' => ucfirst($additionalData['deliveryMethod']),
+                'documentType'           => $request->getDocumentType(),
+                'documentNumber'         => $order->getId(),
+                'documentDate'           => $orderDate->format('Y-m-d'),
+                'documentCurrency'       => $order->getCurrency()->getIsoCode(),
+                'orderNumberCustomer'    => $order->getOrderNumber(),
+                'contractIdentification' => '',
+                'invoiceDeliveryMethod'  => ucfirst($additionalData['deliveryMethod']),
             ]
         ];
 
@@ -130,11 +127,6 @@ final class InvoiceTransformerExtension implements ExtensionInterface
         $deliveryInformation = $this->generateDeliveryInformation($order, $additionalData['birtdate']);
         if ($deliveryInformation !== false) {
             $invoiceHeaderData['deliveryInformation'] = $deliveryInformation;
-        }
-
-        $paymentInformation = $this->generatePaymentInformation($additionalData['paymentInformation']);
-        if ($paymentInformation !== false) {
-            $invoiceHeaderData['paymentInformation'] = $paymentInformation;
         }
 
         $request->setInvoiceHeader($invoiceHeaderData);
@@ -232,7 +224,7 @@ final class InvoiceTransformerExtension implements ExtensionInterface
      */
     private function generateInvoicingInformation($invoiceData)
     {
-        if (!is_array($invoiceData) || count(array_filter($invoiceData)) === 0) {
+        if (!is_array($invoiceData) || count($this->removeNullValues($invoiceData)) === 0) {
             return false;
         }
 
@@ -272,9 +264,6 @@ final class InvoiceTransformerExtension implements ExtensionInterface
         if (!empty($invoiceData['companyAddress']['email'])) {
             $invoicingParty['companyAddress']['email'] = $invoiceData['companyAddress']['email'];
         }
-
-        //$invoicingParty['organisationUnitName'] = ''; //?
-
         if (!empty($invoiceData['contactPerson']['firstName'])) {
             $invoicingParty['contactPerson']['firstname'] = $invoiceData['contactPerson']['firstName'];
         }
@@ -308,7 +297,6 @@ final class InvoiceTransformerExtension implements ExtensionInterface
 
         $billToParty['customerId'] = $customer->getId();
         $billToParty['language'] = $this->getLanguage($order);
-        //$billToParty['customerNumberAsInSupplierSystem'] = ''; //?
 
         $addressType = 'privateAddress';
         $isCompany = method_exists($invoiceAddress, 'getTaxIdNumber') && !empty($invoiceAddress->getTaxIdNumber());
@@ -343,12 +331,7 @@ final class InvoiceTransformerExtension implements ExtensionInterface
             $billToParty[$addressType]['birthday'] = $birthday;
         }
 
-        //$billToParty['identificationOrganisationUnit'] = ''; //?
-        //$billToParty['organisationUnitName'] = ''; //?
-        //$billToParty['contactIdentification'] = ''; //?
-        //$billToParty['additionalInformationForContact'] = ''; //?
-        $billToParty['checkAge'] = 'false';
-        //$billToParty['identityCardNumber'] = ''; //?
+        //$billToParty['checkAge'] = 'false';
 
         return $billToParty;
 
@@ -361,19 +344,13 @@ final class InvoiceTransformerExtension implements ExtensionInterface
      */
     private function generateDeliveryInformation(OrderInterface $order, $birthday)
     {
-        /** @var CustomerInterface $customer */
-        $customer = $order->getCustomer();
-
         /** @var AddressInterface $invoiceAddress */
         $invoiceAddress = $order->getInvoiceAddress();
 
         /** @var AddressInterface $shippingAddress */
         $shippingAddress = $order->getShippingAddress();
 
-        $deliveryInformation = [
-            //'deliveryDate'          => '2019-01-01', //?
-            //'startServiceProviding' => '2019-01-01', //?
-        ];
+        $deliveryInformation = [];
 
         $addressType = 'privateAddress';
         $shippingIsCompany = method_exists($shippingAddress, 'getTaxIdNumber') && !empty($shippingAddress->getTaxIdNumber());
@@ -406,72 +383,7 @@ final class InvoiceTransformerExtension implements ExtensionInterface
             $deliveryInformation[$addressType]['birthday'] = $birthday;
         }
 
-        //$deliveryInformation['organisationUnitName'] = ''; //?
-        //$deliveryInformation['fulfilmentReference'] = ''; //?
-
         return $deliveryInformation;
-    }
-
-    /**
-     * @param $paymentData
-     * @return bool|array
-     */
-    private function generatePaymentInformation($paymentData)
-    {
-        $paymentInformation = [];
-
-        if (!is_array($paymentData) || count(array_filter($paymentData)) === 0) {
-            return false;
-        }
-
-        if (!empty($paymentData['paymentConditions'])) {
-            $paymentInformation['paymentConditions'] = $paymentData['paymentConditions'];
-        }
-        if (!empty($paymentData['termOfPayment'])) {
-            $paymentInformation['termOfPayment'] = $paymentData['termOfPayment'];
-        }
-        if (!empty($paymentData['dueDate'])) {
-            $paymentInformation['dueDate'] = $paymentData['dueDate'];
-        }
-        if (!empty($paymentData['discountForPromptPaymentRate'])) {
-            $paymentInformation['discountForPromptPaymentRate'] = $paymentData['discountForPromptPaymentRate'];
-        }
-        if (!empty($paymentData['discountForPromptPaymentExpireDate'])) {
-            $paymentInformation['discountForPromptPaymentExpireDate'] = $paymentData['discountForPromptPaymentExpireDate'];
-        }
-        if (!empty($paymentData['esrNumber'])) {
-            $paymentInformation['esrNumber'] = $paymentData['esrNumber'];
-        }
-        if (!empty($paymentData['esrParticipationNumber'])) {
-            $paymentInformation['esrParticipationNumber'] = $paymentData['esrParticipationNumber'];
-        }
-        if (!empty($paymentData['bankClearingNumber'])) {
-            $paymentInformation['bankClearingNumber'] = $paymentData['bankClearingNumber'];
-        }
-        if (!empty($paymentData['bankName'])) {
-            $paymentInformation['bankName'] = $paymentData['bankName'];
-        }
-        if (!empty($paymentData['branch'])) {
-            $paymentInformation['branch'] = $paymentData['branch'];
-        }
-        if (!empty($paymentData['country'])) {
-            $paymentInformation['country'] = $paymentData['country'];
-        }
-        if (!empty($paymentData['bankAccountNumber'])) {
-            $paymentInformation['bankAccountNumber'] = $paymentData['bankAccountNumber'];
-        }
-        if (!empty($paymentData['payeeName'])) {
-            $paymentInformation['payeeName'] = $paymentData['payeeName'];
-        }
-
-        //$paymentInformation['companyAddress|privateAddress'] = ''; //?
-
-        if (!empty($paymentData['ibanNumber'])) {
-            $paymentInformation['ibanNumber'] = $paymentData['ibanNumber'];
-        }
-
-        return $paymentInformation;
-
     }
 
     /***
@@ -483,8 +395,8 @@ final class InvoiceTransformerExtension implements ExtensionInterface
         $defaultLanguage = 'en';
         $gatewayOrderLanguage = $defaultLanguage;
 
-        if (!empty($order->getOrderLanguage())) {
-            $orderLanguage = $order->getOrderLanguage();
+        if (!empty($order->getLocaleCode())) {
+            $orderLanguage = $order->getLocaleCode();
             if (strpos($orderLanguage, '_') !== false) {
                 $orderLanguage = explode('_', $orderLanguage);
                 $gatewayOrderLanguage = $orderLanguage[0];
@@ -509,6 +421,20 @@ final class InvoiceTransformerExtension implements ExtensionInterface
     private function getDecimalPrice($amount, CurrencyInterface $currency)
     {
         return abs($amount / 100);
+    }
+
+    /**
+     * @param $array
+     * @return mixed
+     */
+    private function removeNullValues($array)
+    {
+        foreach ($array as &$value) {
+            if (is_array($value)) {
+                $value = $this->removeNullValues($value);
+            }
+        }
+        return array_filter($array);
     }
 
     /**
