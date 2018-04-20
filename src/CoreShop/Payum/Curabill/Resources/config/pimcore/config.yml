@@ -2,3 +2,21 @@ core_shop_payment:
     pimcore_admin:
         js:
             curabill: /bundles/curabill/pimcore/js/curabill.js
+
+core_shop_workflow:
+    state_machine:
+        coreshop_payment:
+            callbacks:
+                after:
+                    confirm_curabill_payment:
+                        on: ['complete']
+                        do: ['@CoreShop\Payum\CurabillBundle\Event\ConfirmEvent', 'confirm']
+                        args: ['object']
+                    cancel_curabill_payment:
+                        on: ['cancel']
+                        do: ['@CoreShop\Payum\CurabillBundle\Event\CancelEvent', 'cancel']
+                        args: ['object']
+                    refund_curabill_payment:
+                        on: ['refund']
+                        do: ['@CoreShop\Payum\CurabillBundle\Event\RefundEvent', 'refund']
+                        args: ['object']

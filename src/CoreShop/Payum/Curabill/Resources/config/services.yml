@@ -21,6 +21,21 @@ services:
             - { name: coreshop.payment.form.settings, payum-factory: curabill }
             - { name: form.type }
 
+    CoreShop\Payum\CurabillBundle\Event\ConfirmEvent:
+        arguments:
+            - '@payum'
+            - '@coreshop.repository.payment'
+
+    CoreShop\Payum\CurabillBundle\Event\CancelEvent:
+        arguments:
+            - '@payum'
+            - '@coreshop.repository.payment'
+
+    CoreShop\Payum\CurabillBundle\Event\RefundEvent:
+        arguments:
+            - '@payum'
+            - '@coreshop.repository.payment'
+
     payum.curabill_gateway_factory:
         class: Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder
         arguments: [DachcomDigital\Payum\Curabill\CurabillGatewayFactory]

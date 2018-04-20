@@ -23,6 +23,14 @@ coreshop.provider.gateways.curabill = Class.create(coreshop.provider.gateways.ab
                     ['test', 'Test'],
                     ['production', 'Production']
                 ]
+            }),
+            processTypes = new Ext.data.ArrayStore({
+                fields: ['process', 'processName'],
+                data: [
+                    ['direct_process', t('curabill.config.processing_type_direct_process')],
+                    ['redirect_process', t('curabill.config.processing_type_redirect_process')],
+                    ['manually_process', t('curabill.config.processing_type_manually_process')]
+                ]
             });
 
         var optionalFields = [{
@@ -232,6 +240,21 @@ coreshop.provider.gateways.curabill = Class.create(coreshop.provider.gateways.ab
                 flex: 1,
                 length: 255,
                 value: config.responseToken ? config.responseToken : ''
+            },
+            {
+                xtype: 'combobox',
+                fieldLabel: t('curabill.config.processing_type'),
+                name: 'gatewayConfig.config.processingType',
+                value: config.processingType ? config.processingType : '',
+                store: processTypes,
+                triggerAction: 'all',
+                valueField: 'process',
+                displayField: 'processName',
+                mode: 'local',
+                anchor: '100%',
+                flex: 1,
+                forceSelection: true,
+                selectOnFocus: true
             },
             {
                 xtype: 'textfield',

@@ -13,6 +13,7 @@
 namespace CoreShop\Payum\CurabillBundle\Form\Payment;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -50,14 +51,20 @@ final class CurabillType extends AbstractType
                     ]),
                 ],
             ])
-             ->add('responseToken', TextType::class, [
+            ->add('responseToken', TextType::class, [
                 'constraints' => [
                     new NotBlank([
                         'groups' => 'coreshop',
                     ]),
                 ],
             ])
-            ->add('shopCode', TextType::class, [
+            ->add('processingType', TextType::class, [
+                'constraints' => [
+                    new NotBlank([
+                        'groups' => 'coreshop',
+                    ]),
+                ],
+            ])->add('shopCode', TextType::class, [
                 'constraints' => [
                     new NotBlank([
                         'groups' => 'coreshop',
