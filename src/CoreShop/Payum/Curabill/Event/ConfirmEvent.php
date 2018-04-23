@@ -12,6 +12,7 @@
 
 namespace CoreShop\Payum\CurabillBundle\Event;
 
+use CoreShop\Component\Core\Model\OrderInterface;
 use CoreShop\Component\Payment\Model\Payment;
 use CoreShop\Component\Payment\Model\PaymentInterface;
 use CoreShop\Component\Resource\Repository\RepositoryInterface;
@@ -43,22 +44,33 @@ class ConfirmEvent
     }
 
     /**
-     * @param PaymentInterface $payment
+     * @param OrderInterface $order
      * @throws \Payum\Core\Reply\ReplyInterface
      */
-    public function confirm(PaymentInterface $payment)
+    public function confirm(OrderInterface $order)
     {
+        $payments = $this->paymentRepository->findForOrder($order);
+
+        $payment = null;
+        /** @var PaymentInterface $orderPayment */
+        foreach ($payments as $orderPayment) {
+            $factoryName = $orderPayment->getPaymentProvider()->getGatewayConfig()->getFactoryName();
+            if ($factoryName === 'curabill') {
+                $payment = $orderPayment;
+                break;
+            }
+        }
+
+        if (!$payment instanceof PaymentInterface) {
+            return;
+        }
+
         if ($payment->getState() !== Payment::STATE_COMPLETED) {
             return;
         }
 
-        $factoryName = $payment->getPaymentProvider()->getGatewayConfig()->getFactoryName();
-        if ($factoryName !== 'curabill') {
-            return;
-        }
-
-        $saferpay = $this->payum->getGateway('curabill');
-        $saferpay->execute(new Confirm($payment));
+        $curabill = $this->payum->getGateway('curabill');
+        $curabill->execute(new Confirm($payment));
 
     }
 }
