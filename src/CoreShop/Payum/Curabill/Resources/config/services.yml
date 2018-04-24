@@ -11,6 +11,12 @@ services:
         tags:
             - { name: payum.extension, alias: curabill_language_extension, factory: curabill, gateway: curabill, prepend: false }
 
+    CoreShop\Payum\CurabillBundle\Extension\FailedPaymentExtension:
+        arguments:
+            - '@pimcore.translator'
+        tags:
+            - { name: payum.extension, alias: curabill_failed_extension, factory: curabill, gateway: curabill, prepend: false }
+
     CoreShop\Payum\CurabillBundle\Form\Payment\CurabillType:
         tags:
             - { name: coreshop.gateway_configuration_type, type: curabill }
