@@ -7,7 +7,7 @@ It requires the [dachcom-digital/payum-curabill](https://github.com/dachcom-digi
 #### 1. Composer
 
 ```json
-    "coreshop/payum-curabill-bundle": "dev-master"
+    "coreshop/payum-curabill-bundle": "~1.0.0"
 ```
 
 #### 2. Activate
