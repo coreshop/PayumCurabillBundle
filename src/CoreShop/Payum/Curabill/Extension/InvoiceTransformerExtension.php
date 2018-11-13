@@ -18,8 +18,8 @@ use CoreShop\Component\Currency\Model\CurrencyInterface;
 use CoreShop\Component\Core\Model\CustomerInterface;
 use CoreShop\Component\Core\Model\OrderInterface;
 use CoreShop\Component\Core\Model\SaleItemInterface;
+use CoreShop\Component\Core\Model\PaymentInterface;
 use CoreShop\Component\Order\Repository\OrderRepositoryInterface;
-use CoreShop\Component\Payment\Model\PaymentInterface;
 use DachcomDigital\Payum\Curabill\Request\Api\Transformer\InvoiceTransformer;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Extension\Context;
@@ -77,7 +77,7 @@ final class InvoiceTransformerExtension implements ExtensionInterface
         $gatewayData = $gatewayConfig->getConfig();
 
         /** @var OrderInterface $order */
-        $order = $this->orderRepository->find($payment->getOrderId());
+        $order = $payment->getOrder();
 
         $details = ArrayObject::ensureArrayObject($request->getModel());
 
