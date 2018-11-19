@@ -44,11 +44,12 @@ class RefundEvent
 
     /**
      * @param PaymentInterface $payment
+     *
      * @throws \Payum\Core\Reply\ReplyInterface
      */
     public function refund(PaymentInterface $payment)
     {
-        if ($payment->getState() !== Payment::STATE_REFUNDED) {
+        if ($payment->getState() !== Payment::STATE_COMPLETED) {
             return;
         }
 

@@ -18,9 +18,15 @@ use CoreShop\Component\Payment\Model\PaymentInterface;
 use CoreShop\Component\Payment\Repository\PaymentRepositoryInterface;
 use DachcomDigital\Payum\Curabill\Request\Api\Confirm;
 use Payum\Core\Payum;
+use Payum\Core\Request\GetHumanStatus;
 
 class ConfirmEvent
 {
+    /**
+     * @var bool
+     */
+    protected $processIsRunning = false;
+
     /**
      * @var Payum
      */
@@ -48,13 +54,18 @@ class ConfirmEvent
      *
      * @throws \Payum\Core\Reply\ReplyInterface
      */
-    public function confirm(OrderInterface $order)
+    public function confirmByOrder(OrderInterface $order)
     {
         $payments = $this->paymentRepository->findForPayable($order);
 
         $payment = null;
         /** @var PaymentInterface $orderPayment */
         foreach ($payments as $orderPayment) {
+
+            if ($orderPayment->getState() !== Payment::STATE_PROCESSING) {
+                continue;
+            }
+
             $factoryName = $orderPayment->getPaymentProvider()->getGatewayConfig()->getFactoryName();
             if ($factoryName === 'curabill') {
                 $payment = $orderPayment;
@@ -66,12 +77,45 @@ class ConfirmEvent
             return;
         }
 
-        if ($payment->getState() !== Payment::STATE_COMPLETED) {
+        if ($this->processIsRunning === true) {
             return;
         }
 
+        $this->processIsRunning = true;
         $curabill = $this->payum->getGateway('curabill');
         $curabill->execute(new Confirm($payment));
+        $curabill->execute($status = new GetHumanStatus($payment));
+        $this->processIsRunning = false;
 
+    }
+
+    /**
+     * @param PaymentInterface $payment
+     *
+     * @throws \Payum\Core\Reply\ReplyInterface
+     */
+    public function confirmByPayment(PaymentInterface $payment)
+    {
+        if ($payment->getState() !== Payment::STATE_PROCESSING) {
+            return;
+        }
+
+        $factoryName = $payment->getPaymentProvider()->getGatewayConfig()->getFactoryName();
+        if ($factoryName !== 'curabill') {
+            return;
+        }
+
+        if ($payment->getState() !== Payment::STATE_PROCESSING) {
+            return;
+        }
+
+        if ($this->processIsRunning === true) {
+            return;
+        }
+
+        $this->processIsRunning = true;
+        $curabill = $this->payum->getGateway('curabill');
+        $curabill->execute(new Confirm($payment));
+        $this->processIsRunning = false;
     }
 }

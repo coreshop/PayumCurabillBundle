@@ -27,9 +27,10 @@ coreshop.provider.gateways.curabill = Class.create(coreshop.provider.gateways.ab
             processTypes = new Ext.data.ArrayStore({
                 fields: ['process', 'processName'],
                 data: [
+                    ['direct_authorize', t('curabill.config.processing_type_direct_authorize')], // new
                     ['direct_process', t('curabill.config.processing_type_direct_process')],
-                    ['redirect_process', t('curabill.config.processing_type_redirect_process')],
-                    ['manually_process', t('curabill.config.processing_type_manually_process')]
+                    ['redirect_authorize', t('curabill.config.processing_type_redirect_authorize')],
+                    ['redirect_process', t('curabill.config.processing_type_redirect_process')] // was: manually_process
                 ]
             });
 

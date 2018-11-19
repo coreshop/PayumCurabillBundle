@@ -48,7 +48,7 @@ class CancelEvent
      */
     public function cancel(PaymentInterface $payment)
     {
-        if ($payment->getState() !== Payment::STATE_CANCELLED) {
+        if ($payment->getState() !== Payment::STATE_PROCESSING) {
             return;
         }
 

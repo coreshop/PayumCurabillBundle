@@ -7,7 +7,11 @@ core_shop_workflow:
     state_machine:
         coreshop_payment:
             callbacks:
-                after:
+                before:
+                    confirm_curabill_payment:
+                        on: ['complete']
+                        do: ['@CoreShop\Payum\CurabillBundle\Event\ConfirmEvent', 'confirmByPayment']
+                        args: ['object']
                     cancel_curabill_payment:
                         on: ['cancel']
                         do: ['@CoreShop\Payum\CurabillBundle\Event\CancelEvent', 'cancel']
@@ -21,5 +25,5 @@ core_shop_workflow:
                 after:
                     confirm_curabill_payment:
                         on: ['ship']
-                        do: ['@CoreShop\Payum\CurabillBundle\Event\ConfirmEvent', 'confirm']
+                        do: ['@CoreShop\Payum\CurabillBundle\Event\ConfirmEvent', 'confirmByOrder']
                         args: ['object']
