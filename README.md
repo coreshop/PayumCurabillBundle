@@ -3,7 +3,7 @@ This Bundle activates the Curabill PaymentGateway in CoreShop.
 It requires the [dachcom-digital/payum-curabill](https://github.com/dachcom-digital/payum-curabill) repository which will be installed automatically.
 
 ## Requirements
-CoreShop >= 2.0.0-RC.2
+CoreShop >= 2.0.0
 
 ## Installation
 

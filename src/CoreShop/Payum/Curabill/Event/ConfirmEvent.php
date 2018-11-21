@@ -62,7 +62,7 @@ class ConfirmEvent
         /** @var PaymentInterface $orderPayment */
         foreach ($payments as $orderPayment) {
 
-            if ($orderPayment->getState() !== Payment::STATE_PROCESSING) {
+            if (!in_array($orderPayment->getState(), [Payment::STATE_AUTHORIZED, Payment::STATE_PROCESSING])) {
                 continue;
             }
 
@@ -96,16 +96,12 @@ class ConfirmEvent
      */
     public function confirmByPayment(PaymentInterface $payment)
     {
-        if ($payment->getState() !== Payment::STATE_PROCESSING) {
+        if (!in_array($payment->getState(), [Payment::STATE_AUTHORIZED, Payment::STATE_PROCESSING])) {
             return;
         }
 
         $factoryName = $payment->getPaymentProvider()->getGatewayConfig()->getFactoryName();
         if ($factoryName !== 'curabill') {
-            return;
-        }
-
-        if ($payment->getState() !== Payment::STATE_PROCESSING) {
             return;
         }
 
