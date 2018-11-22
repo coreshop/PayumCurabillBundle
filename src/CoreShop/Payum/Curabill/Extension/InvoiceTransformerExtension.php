@@ -14,6 +14,7 @@ namespace CoreShop\Payum\CurabillBundle\Extension;
 
 use CoreShop\Bundle\PayumBundle\Model\GatewayConfig;
 use CoreShop\Component\Address\Model\AddressInterface;
+use CoreShop\Component\Core\Model\CarrierInterface;
 use CoreShop\Component\Currency\Model\CurrencyInterface;
 use CoreShop\Component\Core\Model\CustomerInterface;
 use CoreShop\Component\Core\Model\OrderInterface;
@@ -149,28 +150,49 @@ final class InvoiceTransformerExtension implements ExtensionInterface
             $invoicedPricePerUnitExclVat = $this->getDecimalPrice($item->getItemPrice(false), $order->getCurrency());
             $invoicedPricePerUnitInclVat = $this->getDecimalPrice($item->getItemPrice(true), $order->getCurrency());
 
-            $taxBaseAmount = $this->getDecimalPrice($item->getBaseItemTax(), $order->getBaseCurrency());
             $taxAmount = $this->getDecimalPrice($item->getTotalTax(), $order->getCurrency());
-            $totalAmount = $this->getDecimalPrice($item->getTotal(true), $order->getCurrency());
+            $totalAmountExclVat = $this->getDecimalPrice($item->getTotal(false), $order->getCurrency());
+            $totalAmountInclVat = $this->getDecimalPrice($item->getTotal(true), $order->getCurrency());
 
             $items[] = [
                 //'positionReference'          => null,
                 'productQuantityInformation' => [
                     'description'      => $item->getName(),
-                    'quantityUnit'     => 'pcs',
+                    'quantityUnit'     => 'Stk',
                     'invoicedQuantity' => $item->getQuantity(),
                 ],
                 'priceInformation'           => [
-                    'invoicedPricePerUnitExclVat' => $invoicedPricePerUnitExclVat, //?
-                    'invoicedPricePerUnitInclVat' => $invoicedPricePerUnitInclVat, //?
+                    'invoicedPricePerUnitExclVat' => $invoicedPricePerUnitExclVat,
+                    'invoicedPricePerUnitInclVat' => $invoicedPricePerUnitInclVat,
                     'vatRate'                     => '7.7',
                     //'reasonForTaxReduction' => '', //?
-                    'taxBaseAmount'               => $taxBaseAmount,
+                    'taxBaseAmount'               => $totalAmountExclVat,
                     'taxAmount'                   => $taxAmount,
-                    'totalAmount'                 => $totalAmount,
+                    'totalAmount'                 => $totalAmountInclVat,
                 ],
                 //'additionalInformation'      => null,
 
+            ];
+        }
+
+        // add shipment
+        $carrier = $order->getCarrier();
+
+        if ($carrier instanceof CarrierInterface) {
+            $items[] = [
+                'productQuantityInformation' => [
+                    'description'      => $carrier->getTitle(),
+                    'quantityUnit'     => 'Stk',
+                    'invoicedQuantity' => 1,
+                ],
+                'priceInformation'           => [
+                    'invoicedPricePerUnitExclVat' => $this->getDecimalPrice($order->getShipping(false), $order->getCurrency()),
+                    'invoicedPricePerUnitInclVat' => $this->getDecimalPrice($order->getShipping(true), $order->getCurrency()),
+                    'vatRate'                     => $order->getShippingTaxRate(),
+                    'taxBaseAmount'               => $this->getDecimalPrice($order->getShipping(false), $order->getCurrency()),
+                    'taxAmount'                   => $this->getDecimalPrice($order->getShippingTax(), $order->getCurrency()),
+                    'totalAmount'                 => $this->getDecimalPrice($order->getShipping(true), $order->getCurrency()),
+                ]
             ];
         }
 
@@ -189,13 +211,12 @@ final class InvoiceTransformerExtension implements ExtensionInterface
         /** @var CoreShopTaxItem $tax */
         foreach ($taxes as $tax) {
 
-            $taxBaseAmount = $this->getDecimalPrice($tax->getAmount(), $order->getCurrency());
             $taxAmount = $this->getDecimalPrice($tax->getAmount(), $order->getCurrency());
 
             $taxInformation[] = [
                 'vatInformation' => [
                     'vatRate'       => $tax->getRate(),
-                    'taxBaseAmount' => $taxBaseAmount,
+                    'taxBaseAmount' => $taxAmount,
                     'taxAmount'     => $taxAmount,
                 ]
             ];
@@ -220,6 +241,7 @@ final class InvoiceTransformerExtension implements ExtensionInterface
 
     /**
      * @param $invoiceData
+     *
      * @return bool|array
      */
     private function generateInvoicingInformation($invoiceData)
@@ -283,6 +305,7 @@ final class InvoiceTransformerExtension implements ExtensionInterface
     /**
      * @param OrderInterface $order
      * @param string         $birthday
+     *
      * @return bool|array
      */
     private function generateBillToInformation(OrderInterface $order, $birthday)
@@ -340,6 +363,7 @@ final class InvoiceTransformerExtension implements ExtensionInterface
     /**
      * @param OrderInterface $order
      * @param string         $birthday
+     *
      * @return bool|array
      */
     private function generateDeliveryInformation(OrderInterface $order, $birthday)
@@ -388,6 +412,7 @@ final class InvoiceTransformerExtension implements ExtensionInterface
 
     /***
      * @param $order
+     *
      * @return string
      */
     private function getLanguage(OrderInterface $order)
@@ -416,6 +441,7 @@ final class InvoiceTransformerExtension implements ExtensionInterface
     /**
      * @param                   $amount
      * @param CurrencyInterface $currency
+     *
      * @return float|int
      */
     private function getDecimalPrice($amount, CurrencyInterface $currency)
@@ -425,6 +451,7 @@ final class InvoiceTransformerExtension implements ExtensionInterface
 
     /**
      * @param $array
+     *
      * @return mixed
      */
     private function removeNullValues($array)
