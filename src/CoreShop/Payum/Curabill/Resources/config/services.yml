@@ -28,16 +28,19 @@ services:
             - { name: form.type }
 
     CoreShop\Payum\CurabillBundle\Event\ConfirmEvent:
+        public: true
         arguments:
             - '@payum'
             - '@coreshop.repository.payment'
 
     CoreShop\Payum\CurabillBundle\Event\CancelEvent:
+        public: true
         arguments:
             - '@payum'
             - '@coreshop.repository.payment'
 
     CoreShop\Payum\CurabillBundle\Event\RefundEvent:
+        public: true
         arguments:
             - '@payum'
             - '@coreshop.repository.payment'
