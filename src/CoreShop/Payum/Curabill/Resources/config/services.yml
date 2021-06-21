@@ -1,17 +1,20 @@
 services:
 
     CoreShop\Payum\CurabillBundle\Extension\InvoiceTransformerExtension:
+        public: true
         arguments:
             - '@coreshop.repository.order'
         tags:
             - { name: payum.extension, alias: curabill_customer_transformer_extension, factory: curabill, gateway: curabill, prepend: false }
 
     CoreShop\Payum\CurabillBundle\Extension\ConvertPaymentExtension:
+        public: true
         autowire: true
         tags:
             - { name: payum.extension, alias: curabill_language_extension, factory: curabill, gateway: curabill, prepend: false }
 
     CoreShop\Payum\CurabillBundle\Extension\FailedPaymentExtension:
+        public: true
         arguments:
             - '@pimcore.translator'
         tags:
